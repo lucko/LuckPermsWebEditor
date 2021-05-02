@@ -2,7 +2,7 @@
   <div class="add-node">
     <form class="row" autocomplete="off" @submit.prevent>
       <div class="form-group" v-if="!selectedNodes.length">
-        <label for="permissions">Add permissions</label>
+        <label for="permissions">{{ $t('editor.nodes.addPermissions') }}</label>
         <multiselect
           id="permissions"
           v-model="permissions"
@@ -10,32 +10,31 @@
           :multiple="true"
           :taggable="true"
           @tag="onTag"
-          tag-placeholder="Press enter to select"
-          placeholder="Enter permissions or paste many"
+          :tag-placeholder="$t('editor.nodes.enterToSelect')"
+          :placeholder="$t('editor.nodes.enter')"
           :close-on-select="false"
         />
       </div>
 
       <div v-else class="form-group bulk-edit">
         <p>
-          <span>{{ selectedNodes.length }}</span>
-          selected node{{ selectedNodes.length === 1 ? '' : 's' }}
-          <button @click="deselectNodes" title="Deselect all nodes">
+          <span v-html="$tc('editor.nodes.selected', selectedNodes.length)" />
+          <button @click="deselectNodes" :title="$t('editor.nodes.deselect')">
             <font-awesome icon="times" />
           </button>
         </p>
         <div class="buttons">
           <button @click="copyNodes">
             <font-awesome icon="clone" />
-            Copy
+            {{ $t('editor.copy') }}
           </button>
           <button @click="moveNodes">
             <font-awesome icon="sign-in-alt" />
-            Move
+            {{ $t('editor.move') }}
           </button>
           <button @click="deleteNodes">
             <font-awesome icon="times" />
-            Delete
+            {{ $t('editor.delete') }}
           </button>
         </div>
       </div>
@@ -43,7 +42,7 @@
       <div>
         <div class="form-group">
           <label v-if="!selectedNodes.length">
-            Value
+            {{ $t('editor.value') }}
             <button
               type="button"
               @click="value = !value"
@@ -53,14 +52,14 @@
             </button>
           </label>
           <div v-else class="bulk-value">
-            <label>Value</label>
+            <label>{{ $t('editor.value') }}</label>
             <div>
               <button
                 type="button"
                 class="code true"
                 :class="{ selected: bulk.value === true }"
                 @click="bulk.value = true"
-                title="Change all values to TRUE"
+                :title="$t('editor.nodes.selection.true')"
               >
                 true
               </button>
@@ -69,7 +68,7 @@
                 class="code null"
                 :class="{ selected: bulk.value === null }"
                 @click="bulk.value = null"
-                title="Keep values unchanged"
+                :title="$t('editor.nodes.selection.keep')"
               >
                 -
               </button>
@@ -78,7 +77,7 @@
                 class="code false"
                 :class="{ selected: bulk.value === false }"
                 @click="bulk.value = false"
-                title="Change all values to FALSE"
+                :title="$t('editor.nodes.selection.false')"
               >
                 false
               </button>
@@ -87,12 +86,12 @@
         </div>
 
         <div class="form-group">
-          <label for="expiry">Expiry</label>
+          <label for="expiry">{{ $t('editor.expiry') }}</label>
           <datepicker
             id="expiry"
             name="expiry"
             v-model="expiry"
-            placeholder="never"
+            :placeholder="$t('editor.nodes.never')"
             :disabled-dates="{ to: new Date() }"
           />
         </div>
@@ -100,33 +99,33 @@
 
       <div class="form-group contexts">
         <label v-if="!selectedNodes.length">
-          Contexts
+          {{ $t('editor.contexts') }}
           <button
             type="button"
             class="code"
-            title="Add contexts"
+            :title="$t('editor.nodes.addContexts')"
             @click="context.ui = true"
           >
             <font-awesome icon="plus" />
           </button>
         </label>
         <div class="bulk-contexts" v-else>
-          <label for="bulk_contexts">Contexts</label>
+          <label for="bulk_contexts">{{ $t('editor.contexts') }}</label>
           <div>
             <button
               id="bulk_contexts_replace"
               :class="{ selected: bulk.replaceContexts }"
               @click="bulk.replaceContexts = !bulk.replaceContexts"
-              title="Replace contexts instead of adding?"
+              :title="$t('editor.nodes.replace')"
             >
               <font-awesome icon="check" />
-              Replace
+              {{ $t('editor.replace') }}
             </button>
             <button
               id="bulk_contexts"
               type="button"
               class="code"
-              title="Add contexts"
+              :title="$t('editor.nodes.addContexts')"
               @click="context.ui = true"
             >
               <font-awesome icon="plus" />
@@ -145,31 +144,31 @@
         v-if="!selectedNodes.length"
         type="submit"
         :disabled="permissions.length === 0"
-        title="Add node"
+        :title="$t('editor.nodes.add')"
         @click="addNodesToSession"
       >
         <span>
           <font-awesome icon="plus" />
-          Add
+          {{ $t('editor.add') }}
         </span>
       </button>
       <button
         v-else
         type="submit"
         :disabled="!canUpdateNode"
-        title="Update nodes"
+        :title="$t('editor.nodes.update')"
         @click="updateNodes"
       >
         <span>
           <font-awesome icon="edit" />
-          Update
+          {{ $t('editor.update') }}
         </span>
       </button>
     </form>
 
     <transition name="fade">
       <div v-if="context.ui" class="context-ui" v-click-outside="closeContextUi">
-        <h4>Contexts <span>({{ flattenedContexts.length }})</span></h4>
+        <h4 v-html="$tc('editor.nodes.contextsCount', flattenedContexts.length)" />
         <div class="close" @click="closeContextUi">
           <font-awesome icon="times" />
         </div>
@@ -192,7 +191,7 @@
               <input
                 type="text"
                 v-model="context.key"
-                placeholder="key"
+                :placeholder="$t('editor.key')"
                 @focus="context.keyFocus = true"
                 @blur="blurField('keyFocus')"
               >
@@ -210,7 +209,7 @@
               <input
                 type="text"
                 v-model="context.value"
-                placeholder="value"
+                :placeholder="$t('editor.value')"
                 @focus="context.valueFocus = true"
                 @blur="blurField('valueFocus')"
                 @keydown.enter="addContext"
@@ -229,7 +228,7 @@
         </ul>
         <button @click="addContext">
           <font-awesome icon="plus" />
-          Add context
+          {{ $t('editor.nodes.addContext') }}
         </button>
       </div>
     </transition>
@@ -492,7 +491,7 @@ export default {
             display: flex;
             align-items: center;
 
-            span {
+            span span {
               font-size: 3rem;
               color: $brand-color;
               margin-right: 1rem;

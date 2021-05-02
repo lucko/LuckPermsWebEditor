@@ -5,11 +5,13 @@
         <img alt="LuckPerms logo" src="../assets/logo.svg">
         <div class="text">
           <h1>LuckPerms</h1>
-          <p>Web Permissions Editor</p>
+          <p>{{ $t('editor.description') }}</p>
           <router-link to="/editor/demo">
-            <button class="button demo-button">View Demo</button>
+            <button class="button demo-button">
+              {{ $t('tools.demo') }}
+            </button>
           </router-link>
-          <p>To start a new editor session, use one of the following commands:</p>
+          <p>{{ $t('editor.start') }}</p>
           <ul>
             <li><code>/lp editor</code></li>
             <li><code>/lp user &lt;user&gt; editor</code></li>
@@ -25,20 +27,24 @@
             <img alt="LuckPerms logo" src="../assets/logo.svg">
             <div class="text">
               <h1>LuckPerms</h1>
-              <p>Web Permissions Editor</p>
+              <p>{{ $t('editor.description') }}</p>
               <div v-if="!errors.load">
                 <p>
                   <font-awesome icon="asterisk" :spin="true" />
-                  Loading data...
+                  {{ $t('editor.loading') }}
                 </p>
               </div>
 
               <div v-else class="error">
                 <p>
-                  <strong>There was an error loading the data.</strong>
-                  Either the URL was copied wrong or the session has expired.
+                  <strong>{{ $t('editor.error.new') }}</strong>
+                  {{ $t('editor.error.info') }}
                 </p>
-                <p>Please generate another editor session with <code>/lp editor</code>.</p>
+                <i18n path="editor.error.new" tag="p">
+                  <template #path>
+                    <code>/lp editor</code>
+                  </template>
+                </i18n>
               </div>
             </div>
           </div>
@@ -69,7 +75,7 @@
           <div class="editor-main">
             <nav>
               <div class="logo">
-                <h1>Web Permissions Editor</h1>
+                <h1>{{ $t('editor.description') }}</h1>
               </div>
               <div class="buttons">
                 <div class="search">
@@ -77,7 +83,7 @@
                     v-if="search.toggle"
                     type="text"
                     v-model="search.query"
-                    placeholder="Search"
+                    :placeholder="$t('editor.search')"
                     ref="searchInput"
                   />
                   <button @click="toggleSearch">
@@ -91,14 +97,14 @@
 <!--                <button>-->
 <!--                  <font-awesome icon="redo" />-->
 <!--                </button>-->
-                <button @click="saveData" title="Save and generate code">
+                <button @click="saveData" :title="$t('editor.saveAndGenerate')">
                   <span v-if="saveStatus !== 'saving'">
                     <font-awesome icon="save" fixed-width />
-                    Save
+                    {{ $t('editor.save') }}
                   </span>
                   <span v-else>
                     <font-awesome icon="sync-alt" fixed-width :spin="true" />
-                    Saving...
+                    {{ $t('editor.saving') }}
                   </span>
                 </button>
               </div>
@@ -107,7 +113,7 @@
 
               <div class="editor-no-session" v-if="!currentSession && !search.debouncedQuery">
                 <font-awesome icon="arrow-left" />
-                <h1>Choose a group or user from the side bar</h1>
+                <h1>{{ $t('editor.groups.choose') }}</h1>
               </div>
 
               <div
